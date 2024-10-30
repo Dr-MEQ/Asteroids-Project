@@ -18,12 +18,13 @@ class CircleShape(pygame.sprite.Sprite):
         pass
 
     def handle_collision(self, other: 'CircleShape'):
-        
         self.kill()
 
     def check_collision(self, other: 'CircleShape'):
-        distance = self.position.distance_to(other.position)
-        return distance < self.radius + other.radius
+        if other.type in ('player', 'asteroid'):  # List types that should collide
+            distance = self.position.distance_to(other.position)
+            return distance < self.radius + other.radius
+        return False
 
     def update(self, dt):
         # sub-classes must override

@@ -28,4 +28,5 @@ class Shot(CircleShape):
         screen.blit(self.image, self.rect.topleft)
 
     def handle_collision(self, other):
+        self.image.fill((0, 0, 0, 0))  # Clear the image
         self.kill()
