@@ -1,9 +1,11 @@
 import pygame
+import random
 from constants import *
 
 shots = set()
 from circleshape import CircleShape
 from shot import Shot
+from particles import Particle
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -51,6 +53,18 @@ class Player(CircleShape):
         self.shoot_timer = PLAYER_SHOOT_RATE
         shot = Shot(self.position.x, self.position.y, self.rotation)
         shots.add(shot)
+        
+
+    def handle_collision(self, other: 'CircleShape'):
+        self.kill()
+        number_of_particles = random.randint(100, 150)
+        for _ in range(number_of_particles):
+            particle = Particle(self.position.x, self.position.y)
+            angle = random.uniform(0, 360)
+            speed = random.uniform(5, 50)
+            particle.velocity = pygame.Vector2(speed, 0).rotate(angle) * speed
+            particle.lifetime = random.uniform(.1, .5)
+        
         
 
         

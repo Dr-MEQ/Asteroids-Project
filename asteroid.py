@@ -3,7 +3,7 @@ import random
 from constants import *
 from circleshape import CircleShape
 from particles import Particle
-
+import game_state
 
 class Asteroid(CircleShape, pygame.sprite.Sprite):
     def __init__(self, x, y, radius, color=None):
@@ -32,8 +32,14 @@ class Asteroid(CircleShape, pygame.sprite.Sprite):
             particle.lifetime = random.uniform(.1, .5)
                     
         if self.radius <= ASTEROID_MIN_RADIUS:
-            return # do not split small asteroids
+            game_state.update_player_score(1)
         
+            return # do not split small asteroids
+        elif self.radius <= ASTEROID_MIN_RADIUS + (ASTEROID_MIN_RADIUS-ASTEROID_MAX_RADIUS) / 2:
+            game_state.update_player_score(2)
+        else: 
+            game_state.update_player_score(3)
+
         # Generate two new angles to split in opposite directions
         random_angle = random.uniform(20, 50)
         new_velocity1 = self.velocity.rotate(random_angle) * 1.4
@@ -49,6 +55,5 @@ class Asteroid(CircleShape, pygame.sprite.Sprite):
         # Add the new asteroids to the sprite group
         asteroid1.add(self.containers)
         asteroid2.add(self.containers)
-        
         
         

@@ -1,11 +1,13 @@
 import pygame
+import random
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from particles import Particle
-
+import score
+import game_state
 
 def main():
     pygame.init()
@@ -26,14 +28,18 @@ def main():
     Player.containers = (updatable, drawable)
     Shot.containers = (shots, updatable, drawable)
     
-
-
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+          
+    points = 0
     asteroid_field = AsteroidField()
+    current_score = 0
 
     dt = 0
+    running = True
+    game_over = False
+    end_timer = 0
 
-    while True:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -55,9 +61,9 @@ def main():
         # Check for collisions
         for asteroid in asteroids:
             if player.check_collision(asteroid):
-                print("Game over!")
-                pygame.quit()
-                return
+                player.handle_collision(asteroid)
+                game_over = True
+                
             for obj in asteroids:
                 for other_asteroid in asteroids:
                     if asteroid != other_asteroid and asteroid.check_collision(other_asteroid):
@@ -83,16 +89,32 @@ def main():
                         other_asteroid.velocity = new_v2 #* absorbed_factor
                         
             
-                        
+            
             for shot in shots:
                 if shot.check_collision(asteroid):
                     asteroid.handle_collision(shot)
+                    
                     shot.handle_collision(asteroid)
-                
+                    
+                                    
+        
+        current_score = game_state.get_player_score()
+        score.draw(screen, current_score)
+
         pygame.display.flip()
 
         # limit the framerate to 60 FPS
         dt = clock.tick(60) / 1000
+
+        if game_over:
+            end_timer += dt
+            if end_timer > 1:
+                running = False
+
+    pygame.quit()
+
+
+
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Base class for game objects
 class CircleShape(pygame.sprite.Sprite):
@@ -19,6 +20,17 @@ class CircleShape(pygame.sprite.Sprite):
 
     def handle_collision(self, other: 'CircleShape'):
         self.kill()
+        number_of_particles = random.randint(1000, 1500)
+        for _ in range(number_of_particles):
+            particle = Particle(self.position.x, self.position.y)
+            angle = random.uniform(0, 360)
+            speed = random.uniform(5, 50)
+            particle.velocity = pygame.Vector2(speed, 0).rotate(angle) * speed
+            particle.lifetime = random.uniform(.1, .5)
+        current_time = pygame.time.get_ticks()
+        while pygame.time.get_ticks() - current_time < 3000:
+            pass
+        pygame.quit()
 
     def check_collision(self, other: 'CircleShape'):
         if other.type in ('player', 'asteroid'):  # List types that should collide
